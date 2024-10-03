@@ -1,0 +1,288 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+ <title>
+  25 Years of Oakvillegreen
+ </title>
+ <style>
+  body {
+            background-color: #0089cf;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Avenir Black';
+        }
+        h1 {
+            color: #0089cf;
+            text-align: center;
+            font-size: 2.5em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .slider-texts-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            gap: 20px;
+            margin-bottom: 10px;  
+        }
+        .slider {
+            width: 300px;
+            accent-color: #50b848;
+        }
+        #options {
+            color: #0089cf;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            gap: 20px;
+            margin-bottom: 30px; 
+        }
+        #treeButton{
+            transition-duration: 0.4s;
+            color: #275c2e; 
+            background-color: white;
+            border: none;
+            font-size: 20px;
+        }
+        #treeButton:hover {
+            color: #50b848; 
+        }
+        #treeButton:active {
+            color: #50b848; 
+        }
+        #gardenButton{
+            transition-duration: 0.4s;
+            color: #275c2e; 
+            background-color: white;
+            border: none;
+            font-size: 20px;
+        }
+        #gardenButton:hover {
+            color: #50b848; 
+        }
+        #gardenButton:active {
+            color: #50b848; 
+        }
+        #invasiveButton{
+            transition-duration: 0.4s;
+            color: #275c2e; 
+            background-color: white;
+            border: none;
+            font-size: 20px;
+        }
+        #invasiveButton:hover {
+            color: #50b848; 
+        }
+        #invasiveButton:active {
+            color: #50b848; 
+        }
+        #allButton{
+            color: #275c2e; 
+            background-color: white;
+            border: none;
+            font-size: 20px;
+        }
+        #allButton:hover {
+            color: #50b848; 
+        }
+        #allButton:active {
+            color: #50b848; 
+        }
+        .content-container {
+            display: flex;
+            justify-content: flex-start; 
+            width: 100%;
+            margin: 0 auto;
+        }
+        #map {
+            height: 500px; 
+            width: 100%; /* Adjust to fill the left side */
+            margin-right: 20px;
+        }
+        .photos-container {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #275c2e;
+            font-size: 2.5em;
+            margin-top: 0px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .custom-map-control-button {
+            background-color: #275c2e;
+            border: none;
+            color: white;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .custom-map-control-button:hover {
+            background-color: #50b848;
+        }
+        .info-window-content {
+        font-family: 'Avenir Black';
+        font-size: 16px;
+        color: #275c2e;
+        }
+
+ </style>
+ <h1>
+  25 Years of Oakvillegreen!
+ </h1>
+ <!-- Slider under the header -->
+ <div class="slider-texts-container">
+  <input type="range" min="1" max="4" class="slider" id="range" value="4">
+ </div>
+ <!-- Options under the slider -->
+ <div id="options">
+  <button id="treeButton" type="button">
+   Trees
+  </button>
+  <button id="gardenButton" type="button">
+   Gardens
+  </button>
+  <button id="invasiveButton" type="button">
+   Invasive Species
+  </button>
+  <button id="allButton" type="button">
+   All!
+  </button>
+ </div>
+ <div class="content-container">
+  <!-- Map -->
+  <div id="map">
+  </div>
+  <!-- Photos section -->
+  <div class="photos-container">
+   <h2>
+    Photos
+   </h2>
+   <div id="photo-container">
+   </div>
+   <script>
+    function initMap() {
+            // Create and configure the map
+            const map = new google.maps.Map(document.getElementById('map'), {
+                //add starting latitude, longitude 
+                center: { lat: , lng:  },
+                zoom: 12,
+            });
+            // Create an info window
+            const infoWindow = new google.maps.InfoWindow();
+            // Array to store markers so they can be removed later
+            let markersArray = [];
+            // Initial call to add markers for the selected range
+            addMarkersForRange(4);
+            // Function to create and add a marker to the map
+            function addMarker(position, iconUrl, title) {
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    icon: {
+                        url: iconUrl,
+                        scaledSize: new google.maps.Size(80, 80), // Resize the icon
+                        anchor: new google.maps.Point(40, 40) // Anchor the icon to the bottom center
+                    },
+                    title: title,
+                });
+                // Add click listener to marker
+                marker.addListener("click", () => {
+                    infoWindow.setContent(title);
+                    infoWindow.open(map, marker);
+                    displayPhoto(title); // Display photo when marker is clicked
+                });
+                markersArray.push(marker); // Add marker to the array
+            }
+            // Function to clear all existing markers
+            function clearMarkers() {
+                markersArray.forEach(marker => marker.setMap(null));
+                markersArray = []; // Clear the array
+            }
+            // Function to add markers based on the selected range
+            function addMarkersForRange(range) {
+                // Clear existing markers
+                clearMarkers();
+                // Define marker icons
+                const icons = {
+                    tree: "linkToTreeIcon",
+                    flower: "linkToFlowerIcon",
+                    x: "linkToXIcon"
+                };
+                // Define marker data for each range
+                const markers = {
+                    1: [ 
+                      //All treeplantings in the form, { position: { lat: , lng: }, icon: icons.tree, title: "exampleTitleName" }
+                    ],
+                    2: [ 
+                        //All gardens in the form, { position: { lat: , lng: }, icon: icons.flower, title: "exampleTitleName" }
+                    ],
+                    3: [ 
+                        //All ISR sites in the form, { position: { lat: , lng: }, icon: icons.x, title: "exampleTitleName" }
+                    ],
+                    4: [
+                        //All treeplantings in the form, { position: { lat: , lng: }, icon: icons.tree, title: "exampleTitleName" }
+                        //All gardens in the form, { position: { lat: , lng: }, icon: icons.flower, title: "exampleTitleName" }
+                        //All ISR sites in the form, { position: { lat: , lng: }, icon: icons.x, title: "exampleTitleName" }
+                    ],
+                };
+                // Add markers to the map for the selected range
+                if (markers[range]) {
+                    markers[range].forEach(markerData => {
+                        addMarker(markerData.position, markerData.icon, markerData.title);
+                    });
+                }
+            }
+            // Function to display photo in the photo container
+            function displayPhoto(title) {
+                const photoContainer = document.getElementById('photo-container'); 
+                if (title.includes("exampleTitleName")) {  
+                    photoContainer.innerHTML = '<img src="link" alt="exampleTitleName" style="width:100%">';
+                } 
+                else {
+                    // Default image or message
+                    photoContainer.innerHTML = '<p>No image available</p>';
+                }
+
+            }
+            // Event listener for the slider
+            document.getElementById('range').addEventListener('input', function () {
+                const rangeValue = parseInt(this.value, 10);
+                addMarkersForRange(rangeValue);
+            });
+            document.getElementById('treeButton').addEventListener('click', function () {
+                addMarkersForRange(1);
+                // Set slider value
+                document.getElementById('range').value = 1;
+            });
+            document.getElementById('gardenButton').addEventListener('click', function () {
+                addMarkersForRange(2);
+                // Set slider value
+                document.getElementById('range').value = 2;
+            });
+            document.getElementById('invasiveButton').addEventListener('click', function () {
+                addMarkersForRange(3);
+                // Set slider value
+                document.getElementById('range').value = 3;
+            });
+            document.getElementById('allButton').addEventListener('click', function () {
+                addMarkersForRange(4);
+                // Set slider value
+                document.getElementById('range').value = 4;
+            });
+            // Initial call to add markers for the default range
+            addMarkersForRange(parseInt(document.getElementById('range').value, 10));
+        }
+   </script>
+   <script src="https://maps.googleapis.com/maps/api/js?key='APIKey'&amp;callback=initMap&amp;v=weekly&amp;libraries=marker&amp;loading=async" defer="">
+   </script>
+  </div>
+ </div>
